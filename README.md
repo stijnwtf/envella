@@ -4,6 +4,8 @@
   Works in Node, Bun, Deno and Cloudflare Workers. ~2 kB gzipped.</p>
 
   <p>
+    <a href="https://www.npmjs.com/package/envella"><img src="https://img.shields.io/npm/v/envella" alt="npm version" /></a>
+    <a href="https://bundlephobia.com/package/envella"><img src="https://img.shields.io/bundlephobia/minzip/envella" alt="bundle size" /></a>
     <a href="https://github.com/stijnwtf/envella/actions/workflows/ci.yml"><img src="https://github.com/stijnwtf/envella/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/github/license/stijnwtf/envella" alt="MIT license" /></a>
     <a href="https://github.com/stijnwtf/envella/stargazers"><img src="https://img.shields.io/github/stars/stijnwtf/envella?style=social" alt="GitHub stars" /></a>
