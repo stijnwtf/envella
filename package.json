@@ -1,5 +1,5 @@
 {
-  "name": "@stijnwtf/strictenv",
+  "name": "envella",
   "version": "0.1.0",
   "description": "Typed, validated environment variables with zero dependencies. Works in Node, Bun, Deno and Cloudflare Workers.",
   "type": "module",
@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stijnwtf/strictenv.git"
+    "url": "git+https://github.com/stijnwtf/envella.git"
   },
   "sideEffects": false,
   "exports": {
@@ -46,8 +46,5 @@
   "packageManager": "pnpm@11.9.0",
   "engines": {
     "node": ">=18.17"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

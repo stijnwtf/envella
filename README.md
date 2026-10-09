@@ -1,17 +1,17 @@
 <div align="center">
-  <h1>🔐 strictenv</h1>
+  <h1>🔐 envella</h1>
   <p><strong>Typed, validated environment variables. Zero dependencies.</strong><br/>
   Works in Node, Bun, Deno and Cloudflare Workers. ~2 kB gzipped.</p>
 
   <p>
-    <a href="https://github.com/stijnwtf/strictenv/actions/workflows/ci.yml"><img src="https://github.com/stijnwtf/strictenv/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
-    <a href="LICENSE"><img src="https://img.shields.io/github/license/stijnwtf/strictenv" alt="MIT license" /></a>
-    <a href="https://github.com/stijnwtf/strictenv/stargazers"><img src="https://img.shields.io/github/stars/stijnwtf/strictenv?style=social" alt="GitHub stars" /></a>
+    <a href="https://github.com/stijnwtf/envella/actions/workflows/ci.yml"><img src="https://github.com/stijnwtf/envella/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/github/license/stijnwtf/envella" alt="MIT license" /></a>
+    <a href="https://github.com/stijnwtf/envella/stargazers"><img src="https://img.shields.io/github/stars/stijnwtf/envella?style=social" alt="GitHub stars" /></a>
   </p>
 </div>
 
 ```ts
-import { createEnv, url, port, bool, oneOf, str } from '@stijnwtf/strictenv';
+import { createEnv, url, port, bool, oneOf, str } from 'envella';
 
 export const env = createEnv({
   DATABASE_URL: url({ description: 'Postgres connection string' }),
@@ -51,7 +51,7 @@ No more fixing missing variables one failed deploy at a time.
 ## Install
 
 ```bash
-npm install @stijnwtf/strictenv   # or pnpm / bun / yarn
+npm install envella   # or pnpm / bun / yarn
 ```
 
 ## Validators
@@ -86,7 +86,7 @@ Empty strings count as missing, so `PORT=` in a `.env` file falls back to the de
 ### Custom validators
 
 ```ts
-import { makeValidator } from '@stijnwtf/strictenv';
+import { makeValidator } from 'envella';
 
 const hexColor = makeValidator('hex color', (raw) => {
   if (!/^#[0-9a-f]{6}$/i.test(raw)) throw new Error('expected #rrggbb');
@@ -132,7 +132,7 @@ const env = createEnv(schema, {
 ## Generate `.env.example`
 
 ```ts
-import { toExample } from '@stijnwtf/strictenv';
+import { toExample } from 'envella';
 import { writeFileSync } from 'node:fs';
 
 writeFileSync('.env.example', toExample(schema));

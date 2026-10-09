@@ -1,5 +1,5 @@
 /**
- * strictenv: typed, validated environment variables with zero dependencies.
+ * envella: typed, validated environment variables with zero dependencies.
  */
 
 export interface Options<T> {
