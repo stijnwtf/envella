@@ -1,5 +1,5 @@
 {
-  "name": "strictenv",
+  "name": "@stijnwtf/strictenv",
   "version": "0.1.0",
   "description": "Typed, validated environment variables with zero dependencies. Works in Node, Bun, Deno and Cloudflare Workers.",
   "type": "module",
@@ -46,5 +46,8 @@
   "packageManager": "pnpm@11.9.0",
   "engines": {
     "node": ">=18.17"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
