@@ -1,0 +1,50 @@
+{
+  "name": "strictenv",
+  "version": "0.1.0",
+  "description": "Typed, validated environment variables with zero dependencies. Works in Node, Bun, Deno and Cloudflare Workers.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "env",
+    "environment",
+    "dotenv",
+    "config",
+    "validation",
+    "typescript",
+    "cloudflare-workers",
+    "bun",
+    "deno"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stijnwtf/strictenv.git"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "prepublishOnly": "pnpm build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@types/node": "^22.20.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  },
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=18.17"
+  }
+}
