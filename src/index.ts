@@ -90,6 +90,12 @@ export const int = makeValidator('integer', (raw) => {
   return Number.parseInt(raw, 10);
 });
 
+export const port = makeValidator('port', (raw) => {
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 1 || n > 65535) fail('expected a port (1-65535)');
+  return n;
+});
+
 const truthy = new Set(['true', '1', 'yes', 'on']);
 const falsy = new Set(['false', '0', 'no', 'off']);
 
@@ -99,6 +105,50 @@ export const bool = makeValidator('boolean', (raw) => {
   if (falsy.has(v)) return false;
   return fail('expected true/false, 1/0, yes/no or on/off');
 });
+
+export const url = makeValidator('url', (raw) => (URL.canParse(raw) ? raw : fail('expected a URL')));
+
+export const email = makeValidator('email', (raw) => {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)) fail('expected an email address');
+  return raw;
+});
+
+/** Comma separated list (or a custom separator), trimmed, empty entries dropped. */
+export function list<const O extends Options<string[]> & { separator?: string } = Record<never, never>>(
+  options?: O,
+): Validator<Output<string[], O>> {
+  const separator = options?.separator ?? ',';
+  return makeValidator('list', (raw) =>
+    raw
+      .split(separator)
+      .map((s) => s.trim())
+      .filter(Boolean),
+  )(options as Options<string[]>) as Validator<Output<string[], O>>;
+}
+
+/** One of a fixed set of strings, e.g. `oneOf(['development', 'production'])`. */
+export function oneOf<
+  const V extends readonly [string, ...string[]],
+  const O extends Options<V[number]> = Record<never, never>,
+>(values: V, options?: O): Validator<Output<V[number], O>> {
+  const kind = values.map((v) => JSON.stringify(v)).join(' | ');
+  return makeValidator(kind, (raw) =>
+    (values as readonly string[]).includes(raw) ? (raw as V[number]) : fail(`expected one of ${kind}`),
+  )(options as Options<V[number]>) as Validator<Output<V[number], O>>;
+}
+
+/** Parsed JSON. Pass a type argument to type the result: `json<{ a: number }>()`. */
+export function json<T = unknown, const O extends Options<T> = Record<never, never>>(
+  options?: O,
+): Validator<Output<T, O>> {
+  return makeValidator<T>('json', (raw) => {
+    try {
+      return JSON.parse(raw) as T;
+    } catch {
+      return fail('expected valid JSON');
+    }
+  })(options as Options<T>) as Validator<Output<T, O>>;
+}
 
 // CREATE ----------------------------------------------------------------------
 
