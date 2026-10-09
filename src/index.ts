@@ -203,6 +203,20 @@ export function createEnv<const S extends Schema>(schema: S, options: CreateEnvO
   return Object.freeze(result) as Infer<S>;
 }
 
+/** Generate a documented `.env.example` from a schema. */
+export function toExample(schema: Schema): string {
+  const blocks = Object.entries(schema).map(([key, v]) => {
+    const { description, example, default: fallback, optional, secret } = v.options;
+    const notes = [v.kind, optional || fallback !== undefined ? 'optional' : 'required', secret ? 'secret' : null]
+      .filter(Boolean)
+      .join(', ');
+    const comment = `# ${description ? `${description} ` : ''}(${notes})`;
+    const value = example ?? (fallback !== undefined && !secret ? formatDefault(fallback) : '');
+    return `${comment}\n${key}=${value}`;
+  });
+  return `${blocks.join('\n\n')}\n`;
+}
+
 // HELPERS ---------------------------------------------------------------------
 
 function defaultSource(): Source {
@@ -217,4 +231,10 @@ function defaultSource(): Source {
 
 function truncate(s: string): string {
   return s.length > 40 ? `${s.slice(0, 37)}...` : s;
+}
+
+function formatDefault(value: unknown): string {
+  if (Array.isArray(value)) return value.join(',');
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value);
 }
