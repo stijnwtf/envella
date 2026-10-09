@@ -7,6 +7,8 @@ export interface Options<T> {
   default?: T;
   /** Allow the variable to be missing. Its type becomes `T | undefined` unless a default is set. */
   optional?: boolean;
+  /** Mask the value in error messages. */
+  secret?: boolean;
   /** Shown in error messages and in the generated `.env.example`. */
   description?: string;
   /** Example value for the generated `.env.example`. */
@@ -158,6 +160,8 @@ export interface CreateEnvOptions {
    * `Deno.env`. In Cloudflare Workers, pass the `env` binding object.
    */
   source?: Source | object;
+  /** Called instead of throwing. Useful to log and `process.exit(1)`. */
+  onError?: (error: EnvError) => never;
 }
 
 /**
@@ -171,7 +175,7 @@ export function createEnv<const S extends Schema>(schema: S, options: CreateEnvO
 
   for (const [key, validator] of Object.entries(schema)) {
     const raw = source[key];
-    const { default: fallback, optional, description } = validator.options;
+    const { default: fallback, optional, secret, description } = validator.options;
     const hint = description ? ` (${description})` : '';
 
     if (raw === undefined || raw === '') {
@@ -185,16 +189,18 @@ export function createEnv<const S extends Schema>(schema: S, options: CreateEnvO
       result[key] = validator.parse(String(raw));
     } catch (error) {
       const reason = error instanceof Invalid ? error.message : `expected ${validator.kind}`;
-      const shown = JSON.stringify(truncate(String(raw)));
+      const shown = secret ? '****' : JSON.stringify(truncate(String(raw)));
       issues.push({ key, message: `${shown} is invalid: ${reason}${hint}` });
     }
   }
 
   if (issues.length > 0) {
-    throw new EnvError(issues);
+    const error = new EnvError(issues);
+    if (options.onError) options.onError(error);
+    throw error;
   }
 
-  return result as Infer<S>;
+  return Object.freeze(result) as Infer<S>;
 }
 
 // HELPERS ---------------------------------------------------------------------
