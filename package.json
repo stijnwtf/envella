@@ -1,6 +1,6 @@
 {
   "name": "envella",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Typed, validated environment variables with zero dependencies. Works in Node, Bun, Deno and Cloudflare Workers.",
   "type": "module",
   "license": "MIT",
@@ -13,11 +13,18 @@
     "typescript",
     "cloudflare-workers",
     "bun",
-    "deno"
+    "deno",
+    "env-validation",
+    "cli",
+    "dotenv-example"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stijnwtf/envella.git"
+  },
+  "homepage": "https://github.com/stijnwtf/envella#readme",
+  "bugs": {
+    "url": "https://github.com/stijnwtf/envella/issues"
   },
   "sideEffects": false,
   "exports": {
@@ -26,8 +33,12 @@
       "default": "./dist/index.js"
     }
   },
+  "bin": {
+    "envella": "./dist/bin.js"
+  },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
