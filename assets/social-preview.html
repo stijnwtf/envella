@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
+html,body{margin:0;width:1280px;height:640px;background:#0d1117;font-family:-apple-system,"SF Pro Display",Inter,system-ui,sans-serif;color:#e6edf3;overflow:hidden}
+.wrap{padding:72px 80px;box-sizing:border-box;height:100%;display:flex;flex-direction:column;gap:36px;background:radial-gradient(900px 500px at 100% 0%,#1f6feb22,transparent),radial-gradient(700px 400px at 0% 100%,#7ee78714,transparent)}
+h1{margin:0;font-size:84px;letter-spacing:-2px;font-weight:800}
+p{margin:0;font-size:32px;color:#9da7b3;line-height:1.35}
+.term{border:1px solid #30363d;border-radius:16px;background:#010409;padding:28px 34px;font:24px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre}
+.r{color:#ff7b72}.d{color:#8b949e}.y{color:#f2cc60}.k{font-weight:600}
+.tags{display:flex;gap:14px;font-size:24px;color:#9da7b3}.tags span{border:1px solid #30363d;border-radius:999px;padding:6px 18px}
+</style></head><body><div class="wrap">
+<div><h1>🔐 envella</h1><p>Typed, validated environment variables. Every error at once, secrets masked.</p></div>
+<div class="term"><span class="r">Invalid environment variables:</span>
+<span class="r">  x </span><span class="k">DATABASE_URL</span><span class="d">  missing, expected url</span>
+<span class="r">  x </span><span class="k">PORT        </span><span class="d">  </span><span class="y">"abc"</span><span class="d"> is invalid: expected a port</span>
+<span class="r">  x </span><span class="k">STRIPE_KEY  </span><span class="d">  </span><span class="y">****</span><span class="d"> is invalid: expected string</span></div>
+<div class="tags"><span>zero deps</span><span>~2 kB</span><span>Node</span><span>Bun</span><span>Deno</span><span>Workers</span></div>
+</div></body></html>
