@@ -34,7 +34,7 @@
     }
   },
   "bin": {
-    "envella": "./dist/bin.js"
+    "envella": "dist/bin.js"
   },
   "files": [
     "dist",
