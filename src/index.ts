@@ -28,6 +28,11 @@ export interface Validator<T> {
   readonly _output?: T;
 }
 
+/** A validator constructor such as `str` or `url`: call it with options to get a validator. */
+export type ValidatorFactory<T> = <const O extends Options<T> = Record<never, never>>(
+  options?: O,
+) => Validator<Output<T, O>>;
+
 export type Schema = Record<string, Validator<unknown>>;
 
 export type Infer<S extends Schema> = {
@@ -63,7 +68,7 @@ export class EnvError extends Error {
  *       return raw;
  *     });
  */
-export function makeValidator<T>(kind: string, parse: (raw: string) => T) {
+export function makeValidator<T>(kind: string, parse: (raw: string) => T): ValidatorFactory<T> {
   return <const O extends Options<T> = Record<never, never>>(options?: O): Validator<Output<T, O>> => ({
     kind,
     options: options ?? {},
@@ -79,20 +84,20 @@ function fail(message: string): never {
 
 // BUILT-IN VALIDATORS ---------------------------------------------------------
 
-export const str = makeValidator('string', (raw) => raw);
+export const str: ValidatorFactory<string> = makeValidator('string', (raw) => raw);
 
-export const num = makeValidator('number', (raw) => {
+export const num: ValidatorFactory<number> = makeValidator('number', (raw) => {
   const n = Number(raw);
   if (raw.trim() === '' || Number.isNaN(n)) fail('expected a number');
   return n;
 });
 
-export const int = makeValidator('integer', (raw) => {
+export const int: ValidatorFactory<number> = makeValidator('integer', (raw) => {
   if (!/^-?\d+$/.test(raw.trim())) fail('expected an integer');
   return Number.parseInt(raw, 10);
 });
 
-export const port = makeValidator('port', (raw) => {
+export const port: ValidatorFactory<number> = makeValidator('port', (raw) => {
   const n = Number(raw);
   if (!Number.isInteger(n) || n < 1 || n > 65535) fail('expected a port (1-65535)');
   return n;
@@ -101,16 +106,18 @@ export const port = makeValidator('port', (raw) => {
 const truthy = new Set(['true', '1', 'yes', 'on']);
 const falsy = new Set(['false', '0', 'no', 'off']);
 
-export const bool = makeValidator('boolean', (raw) => {
+export const bool: ValidatorFactory<boolean> = makeValidator('boolean', (raw) => {
   const v = raw.trim().toLowerCase();
   if (truthy.has(v)) return true;
   if (falsy.has(v)) return false;
   return fail('expected true/false, 1/0, yes/no or on/off');
 });
 
-export const url = makeValidator('url', (raw) => (URL.canParse(raw) ? raw : fail('expected a URL')));
+export const url: ValidatorFactory<string> = makeValidator('url', (raw) =>
+  URL.canParse(raw) ? raw : fail('expected a URL'),
+);
 
-export const email = makeValidator('email', (raw) => {
+export const email: ValidatorFactory<string> = makeValidator('email', (raw) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)) fail('expected an email address');
   return raw;
 });

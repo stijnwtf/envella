@@ -1,0 +1,9 @@
+{
+  "name": "@stijnwtf/envella",
+  "version": "0.2.0",
+  "license": "MIT",
+  "exports": "./src/index.ts",
+  "publish": {
+    "include": ["src/index.ts", "README.md", "LICENSE"]
+  }
+}
