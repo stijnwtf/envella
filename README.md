@@ -31,12 +31,7 @@ env.SENTRY_DSN; // string | undefined
 
 When something is wrong you get **every** problem at once, before your app starts, with secrets masked:
 
-```
-EnvError: Invalid environment variables:
-  x DATABASE_URL  missing, expected url (Postgres connection string)
-  x PORT          "abc" is invalid: expected a port (1-65535)
-  x STRIPE_KEY    **** is invalid: expected string
-```
+<p align="center"><img src="https://raw.githubusercontent.com/stijnwtf/envella/main/assets/terminal.svg" alt="envella listing three invalid environment variables at once: DATABASE_URL missing, PORT &quot;abc&quot; is not a port, STRIPE_KEY masked as ****" width="760" /></p>
 
 No more fixing missing variables one failed deploy at a time.
 
@@ -48,12 +43,14 @@ No more fixing missing variables one failed deploy at a time.
 - **Secrets masked** in error messages, so they never end up in your logs
 - **Any runtime**: reads `process.env` or `Deno.env`, or pass Cloudflare Workers' `env` binding
 - **`.env.example` generator** that documents every variable from the schema
+- **CLI** to check the environment in CI and keep `.env.example` in sync
 - **Custom validators** in three lines
 
 ## Install
 
 ```bash
 npm install envella   # or pnpm / bun / yarn
+deno add jsr:@stijnwtf/envella
 ```
 
 ## Validators
@@ -150,6 +147,52 @@ PORT=3000
 # (string, required, secret)
 STRIPE_KEY=
 ```
+
+## CLI
+
+Export your schema from a file (not the result of `createEnv`):
+
+```ts
+// env.schema.ts
+import { port, str, url } from 'envella';
+
+export const schema = {
+  DATABASE_URL: url({ description: 'Postgres connection string' }),
+  PORT: port({ default: 3000 }),
+  STRIPE_KEY: str({ secret: true }),
+};
+```
+
+```bash
+# Fail the pipeline before deploying with a broken environment
+npx envella check env.schema.ts
+npx envella check env.schema.ts --env-file .env.production
+
+# Write .env.example, or fail CI when it is out of date
+npx envella example env.schema.ts
+npx envella example env.schema.ts --check
+```
+
+TypeScript schema files need Node 22.18+, Bun (`bunx envella`) or Deno.
+
+## Why not envalid, t3-env or Zod?
+
+They are all good libraries, and envella borrows from them. Here is the honest difference:
+
+| | envella | [envalid](https://github.com/af/envalid) | [t3-env](https://github.com/t3-oss/t3-env) | Zod on its own |
+| --- | --- | --- | --- | --- |
+| Dependencies | none | `tslib` | Zod, Valibot or ArkType | Zod |
+| Size (min + gzip) | ~2 kB | ~7 kB | ~1 kB plus your schema library | your schema library |
+| Every error at once | ✅ | ✅ | ✅ | ✅ with `safeParse` |
+| Shows the bad value, masks secrets | ✅ | shows values, no masking | ❌ | ❌ |
+| `.env.example` generator | ✅ | ❌ | ❌ | ❌ |
+| CLI for CI | ✅ | ❌ | ❌ | ❌ |
+| Client/server split for Next.js and Vite | ❌ | ❌ | ✅ | ❌ |
+| Env-friendly parsing (`yes`/`on`, ports, lists) | ✅ | ✅ | via coercion | via coercion |
+
+**Pick envella** if you want a tiny, dependency-free validator that runs anywhere, keeps secrets out of your logs and documents itself.
+**Pick t3-env** if you need to stop server variables from leaking into a Next.js or Vite client bundle.
+**Pick Zod** if your whole app already speaks Zod and you'd rather have one schema language.
 
 ## License
 
